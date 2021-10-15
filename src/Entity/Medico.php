@@ -4,7 +4,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
-
+use App\Entity\Especialidade;
 /**
  * @ORM\Entity()
  */
@@ -16,15 +16,15 @@ class Medico implements \JsonSerializable
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    public $id;
+    private $id;
     /**
      * @ORM\Column(type="integer")
      */
-    public $crm;
+    private $crm;
     /**
      * @ORM\Column(type="string")
      */
-    public $nome;
+    private $nome;
 
     /**
      * @ORM\ManyToOne(targetEntity=Especialidade::class)
@@ -79,7 +79,7 @@ class Medico implements \JsonSerializable
             'id' => $this->getId(),
             'crm' => $this->getCrm(),
             'nome' => $this->getNome(),
-            'especialidade' => $this->getEspecialidade()
+            'especialidadeId' => $this->getEspecialidade()->getId()
         ];
     }
 }

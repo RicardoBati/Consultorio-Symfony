@@ -18,13 +18,13 @@ class MedicoFactory
         $dadoEmJson = json_decode($json);
         $especialidadeId = $dadoEmJson->especialidadeId;
         $especialidade = $this->especialidadeRepository->find($especialidadeId);
-
+        
         $medico = new Medico();
         $medico
             ->setCrm($dadoEmJson->crm)
             ->setNome($dadoEmJson->nome)
             ->setEspecialidade($especialidade);
-        $medico->nome = $dadoEmJson->nome;
+        
 
         return $medico;
     }

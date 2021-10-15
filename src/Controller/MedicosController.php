@@ -41,7 +41,7 @@ class MedicosController extends AbstractController
     {
         $corpoRequisicao = $request->getContent();
         $medico = $this->medicoFactory->criarMedico($corpoRequisicao);
-
+        
         $this->entityManager->persist($medico);
         $this->entityManager->flush();
 
@@ -89,7 +89,7 @@ class MedicosController extends AbstractController
         if (is_null($medicoExistente)) {
             return new Response('',Response::HTTP_NOT_FOUND);
         }
-
+ 
         $medicoExistente
             ->setCrm($medicoEnviado->getCrm())
             ->setNome($medicoEnviado->getNome());
@@ -101,10 +101,10 @@ class MedicosController extends AbstractController
 
 
     /**
-     *  @Route ("/medicos/{id}", methods={"DELETE"}) 
+     *  @Route ("/medicos/{id}", methods={"DELETE"})
      */
 
-    public function FunctionName(int $id) : Response
+    public function deleteMedico(int $id) : Response
     {
          $medico = $this->buscaMedico($id);
          $this->entityManager->remove($medico);
@@ -123,6 +123,25 @@ class MedicosController extends AbstractController
         
         return $medico;
     }
+    /**
+     * @Route ("/especialidades/{especialidadeId}/medicos"), methods={GET})
+     */
+
+    public function buscarPorEspecialidade(int $especialidadeId) : Response
+    {
+        
+        $repositorioDeMedicos = $this
+            ->getDoctrine()
+            ->getRepository(Medico::class);
+
+        $medicos = $repositorioDeMedicos->findBy([
+            'especialidade' => $especialidadeId
+        ]);
+
+        return new JsonResponse($medicos);
+
+    }
+
 }
 
 
