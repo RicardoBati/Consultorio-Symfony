@@ -13,25 +13,14 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 
-class EspecialidadesController extends AbstractController
+class EspecialidadesController extends BaseController
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
-    * @var EspecialidadeRepository
-    */
-    private $repository;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         EspecialidadeRepository $repository
     ) {
-
-        $this->repository = $repository;
-        $this->entityManager = $entityManager;
+        parent::__construct($repository, $entityManager);
     }
     /**
      *  @Route("/especialidades", methods={"POST"})
@@ -50,28 +39,7 @@ class EspecialidadesController extends AbstractController
 
         return new JsonResponse($especialidade);
     }
-
-    /**
-     * @Route("/especialidades", methods={"GET"})
-     */
-
-    public function buscarTodas() : Response
-    {
-        $especialidadeList = $this->repository->findAll();
-
-        return new JsonResponse($especialidadeList);
-
-    }
-    
-    /**
-     * @Route("/especialidades/{id}", methods={"GET"})
-     */
-
-    public function buscarUm(int $id): Response
-    {
-        return new JsonResponse($this->repository->find($id));
-    }
-
+ 
     /**
      * @Route("/especialidades/{id}", methods={"PUT"})
      */
@@ -87,19 +55,6 @@ class EspecialidadesController extends AbstractController
         $this->entityManager->flush();
 
         return new JsonResponse($especialidade);
-    }
-
-    /**
-     * @Route("/especialidades/{id}", methods={"DELETE"})
-     */
-    public function remove(int $id) : Response
-    {
-        $especialidade = $this->repository->find($id);
-
-        $this->entityManager->remove($especialidade);
-        $this->entityManager->flush();
-
-        return new JsonResponse('', Response::HTTP_NO_CONTENT);
     }
 
 }

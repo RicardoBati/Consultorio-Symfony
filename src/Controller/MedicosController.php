@@ -6,18 +6,13 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Entity\Medico;
 use App\Helper\MedicoFactory;
+use App\Repository\MedicoRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class MedicosController extends AbstractController
+class MedicosController extends BaseController
 {       
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-    
+
     /**
      * @var MedicoFactory
      */
@@ -25,11 +20,11 @@ class MedicosController extends AbstractController
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        MedicoFactory $medicoFactory
+        MedicoFactory $medicoFactory,
+        MedicoRepository $repository
         
     ) {
-        
-        $this->entityManager = $entityManager;
+        parent::__construct($repository, $entityManager);
         $this->medicoFactory = $medicoFactory;
     }
 
@@ -48,33 +43,6 @@ class MedicosController extends AbstractController
         return new JsonResponse($medico);
     }
 
-    /**
-     *  @Route ("/medicos", methods={"GET"}) 
-     */
-
-    public function buscarTodos() : Response
-    {
-        $repositorioDeMedicos = $this
-            ->getDoctrine()
-            ->getRepository(Medico::class);
-        $medicoList = $repositorioDeMedicos->findAll();
-
-        return new JsonResponse($medicoList);
-
-    }
-
-    /**
-     *  @Route ("/medicos/{id}", methods={"GET"}) 
-     */
-
-    public function buscarUm(int $id) : Response
-    {
-        $medico = $this->buscaMedico($id);
-        $codigoRetorno = is_null($medico) ? Response::HTTP_NO_CONTENT : 200;
-
-
-        return new JsonResponse($medico, $codigoRetorno);
-    }
 
     /**
      *  @Route ("/medicos/{id}", methods={"PUT"}) 
@@ -99,42 +67,14 @@ class MedicosController extends AbstractController
         return new JsonResponse($medicoExistente);
     }
 
-
-    /**
-     *  @Route ("/medicos/{id}", methods={"DELETE"})
-     */
-
-    public function deleteMedico(int $id) : Response
-    {
-         $medico = $this->buscaMedico($id);
-         $this->entityManager->remove($medico);
-         $this->entityManager->flush();
-
-         return new Response('', Response::HTTP_NO_CONTENT);
-
-    }
-
-    public function buscaMedico(int $id)
-    {
-        $repositorioDeMedicos = $this
-            ->getDoctrine()
-            ->getRepository(Medico::class);
-        $medico = $repositorioDeMedicos->find($id);
-        
-        return $medico;
-    }
     /**
      * @Route ("/especialidades/{especialidadeId}/medicos"), methods={GET})
      */
 
     public function buscarPorEspecialidade(int $especialidadeId) : Response
     {
-        
-        $repositorioDeMedicos = $this
-            ->getDoctrine()
-            ->getRepository(Medico::class);
 
-        $medicos = $repositorioDeMedicos->findBy([
+        $medicos = $this->repository->findBy([
             'especialidade' => $especialidadeId
         ]);
 
