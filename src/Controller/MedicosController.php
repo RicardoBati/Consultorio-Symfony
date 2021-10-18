@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Entity\Medico;
 use App\Helper\MedicoFactory;
 use App\Repository\MedicoRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,36 +14,14 @@ use Doctrine\ORM\EntityManagerInterface;
 class MedicosController extends BaseController
 {       
 
-    /**
-     * @var MedicoFactory
-     */
-    private $medicoFactory;
-
     public function __construct(
         EntityManagerInterface $entityManager,
-        MedicoFactory $medicoFactory,
+        MedicoFactory $factory,
         MedicoRepository $repository
         
     ) {
-        parent::__construct($repository, $entityManager);
-        $this->medicoFactory = $medicoFactory;
+        parent::__construct($repository, $entityManager, $factory);
     }
-
-    /**
-     *  @Route ("/medicos", methods={"POST"}) 
-     */
-
-    public function novo(Request $request): Response
-    {
-        $corpoRequisicao = $request->getContent();
-        $medico = $this->medicoFactory->criarMedico($corpoRequisicao);
-        
-        $this->entityManager->persist($medico);
-        $this->entityManager->flush();
-
-        return new JsonResponse($medico);
-    }
-
 
     /**
      *  @Route ("/medicos/{id}", methods={"PUT"}) 
@@ -51,7 +30,7 @@ class MedicosController extends BaseController
     public function atualiza(int $id,Request $request) : Response
     {
         $corpoRequisicao = $request->getContent();
-        $medicoEnviado = $this->medicoFactory->criarMedico($corpoRequisicao);
+        $medicoEnviado = $this->factory->criarEntidade($corpoRequisicao);
 
         $medicoExistente = $this->buscaMedico($id);
         if (is_null($medicoExistente)) {
@@ -67,6 +46,13 @@ class MedicosController extends BaseController
         return new JsonResponse($medicoExistente);
     }
 
+
+    public function buscaMedico(int $id)
+    {
+        $medico = $this->repository->find($id);
+        
+        return $medico;
+    }
     /**
      * @Route ("/especialidades/{especialidadeId}/medicos"), methods={GET})
      */
