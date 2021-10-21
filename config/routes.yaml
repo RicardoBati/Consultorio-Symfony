@@ -22,6 +22,12 @@ remove_medicos:
   methods: 
     - DELETE
 
+atualiza_medicos:
+  path: /medicos/{id}
+  controller: App\Controller\MedicosController::atualiza
+  methods: 
+    - PUT
+
 criar_especialidades:
   path: /especialidades
   controller: App\Controller\EspecialidadesController::novo
@@ -45,3 +51,10 @@ remove_especialidade:
   controller: App\Controller\EspecialidadesController::remove
   methods: 
     - DELETE
+
+atualiza_especialidade:
+  path: /especialidades/{id}
+  controller: App\Controller\EspecialidadesController::atualiza
+  methods: 
+    - PUT
+

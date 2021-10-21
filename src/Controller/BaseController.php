@@ -56,6 +56,22 @@ abstract Class BaseController extends AbstractController
 
     }
 
+    public function atualiza(int $id,Request $request) : Response
+    {
+        $corpoRequisicao = $request->getContent();
+        $entidadeEnviada = $this->factory->criarEntidade($corpoRequisicao);
+
+        $entidadeExistente = $this->repository->find($id);
+        if (is_null($entidadeExistente)) {
+            return new Response('',Response::HTTP_NOT_FOUND);
+        }
+        $this->atualizarEntidadeExistente($entidadeExistente, $entidadeEnviada);
+
+            
+        $this->entityManager->flush();
+
+        return new JsonResponse($entidadeExistente);
+    }
 
     public function buscarUm(int $id): Response
     {
@@ -71,6 +87,12 @@ abstract Class BaseController extends AbstractController
 
         return new JsonResponse('', Response::HTTP_NO_CONTENT);
     }
+
+    
+    abstract public function atualizarEntidadeExistente(
+        $entidadeExistente,
+        $entidadeEnviada
+    );
 
 }
 
