@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Medico;
+use App\Helper\ExtratorDadosRequest;
 use App\Helper\MedicoFactory;
 use App\Repository\MedicoRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,10 +18,11 @@ class MedicosController extends BaseController
     public function __construct(
         EntityManagerInterface $entityManager,
         MedicoFactory $factory,
-        MedicoRepository $repository
+        MedicoRepository $repository,
+        ExtratorDadosRequest $extratorDadosRequest
         
     ) {
-        parent::__construct($repository, $entityManager, $factory);
+        parent::__construct($repository, $entityManager, $factory,$extratorDadosRequest);
     }
 
     /**
